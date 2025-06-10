@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package payment;
+
+// Go package path used by generated Go code.
+// Should match your module name and directory layout.
+option go_package = "proto/;paymentpb";
+
+// The PaymentService defines two RPC methods: MakePayment and GetPaymentStatus
+service PaymentService {
+  rpc MakePayment (PaymentRequest) returns (PaymentResponse);
+  rpc GetPaymentStatus (StatusRequest) returns (StatusResponse);
+}
+
+// Message sent by the client to initiate a payment
+message PaymentRequest {
+  string user_id = 1;  // field 1: unique identifier for the user
+  int64 amount_cents = 2;  // amount in smallest unit (e.g. cents)
+}
+
+// Message sent back by server as payment confirmation
+message PaymentResponse {
+  string transaction_id = 1; // field 1: unique transaction ID
+  string status         = 2; // field 2: payment status (e.g., "SUCCESS")
+}
+
+// Message sent by client to query a transaction's status
+message StatusRequest {
+  string transaction_id = 1; // field 1: which transaction to check
+}
+
+// Message returned by server with current status of transaction
+message StatusResponse {
+  string status = 1; // field 1: current status of the payment
+}
+

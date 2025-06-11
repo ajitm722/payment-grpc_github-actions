@@ -40,7 +40,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y protobuf-compiler
 
-      
+      # Installs Go protobuf plugins
+      # This step installs two Go plugins required for working with Protocol Buffers:
+      # 1. protoc-gen-go: Generates Go code from .proto files for Protocol Buffers.
+      # 2. protoc-gen-go-grpc: Generates Go code for gRPC services defined in .proto files.
+      # The binaries for these tools are placed in the default Go binary directory: "${HOME}/go/bin".
+      # The `echo "${HOME}/go/bin" >> $GITHUB_PATH` command adds this directory to the PATH environment variable
+      # for the current GitHub Actions workflow. This ensures that the installed binaries can be accessed
+      # in subsequent steps without specifying their full paths.
       - name: Install Go protobuf plugins
         run: |
           go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36

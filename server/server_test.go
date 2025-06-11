@@ -30,7 +30,7 @@ func TestMakePaymentFailure(t *testing.T) {
 	resp, err := paymentServer.MakePayment(context.Background(), req)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, resp.TransactionId)
-	assert.Equal(t, "FAILURE", resp.Status)
+	assert.Equal(t, "FAILED", resp.Status)
 }
 
 func TestGetPaymentStatusValidTransaction(t *testing.T) {

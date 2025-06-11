@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	pb "payment-grpc-app/proto"
+	pb "github.com/ajitm722/payment-grpc_github-actions/proto"
 
 	"github.com/google/uuid"
 )

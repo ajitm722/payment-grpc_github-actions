@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	pb "payment-grpc-app/proto"
+	pb "github.com/ajitm722/payment-grpc_github-actions/proto"
 
 	"github.com/stretchr/testify/assert"
 )

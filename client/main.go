@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 
+	pb "github.com/ajitm722/payment-grpc_github-actions/proto"
 	"google.golang.org/grpc"
-	pb "payment-grpc-app/proto"
 )
 
 // makePayment sends a payment request to the server and returns the transaction ID.
@@ -83,4 +83,3 @@ func main() {
 	// 3. Query a non-existent transaction ID
 	queryTransaction(client, "non-existent-id-1234")
 }
-

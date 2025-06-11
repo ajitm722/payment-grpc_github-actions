@@ -1,4 +1,4 @@
-module payment-grpc-app
+module github.com/ajitm722/payment-grpc_github-actions
 
 go 1.23.0
 

@@ -1,6 +1,7 @@
 name: Go CI  # Human-readable name of your workflow shown in the GitHub Actions UI
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]  # Trigger workflow when code is pushed to the 'main' branch
   pull_request:
@@ -13,16 +14,16 @@ jobs:
     steps:  # A sequence of shell steps executed on the runner
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         # Downloads your repository source code into the runner's working directory
 
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4
         with:
           go-version: '1.23.0'  # Match this with the Go version in your go.mod
 
       - name: Cache Go modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: /go/pkg/mod
           # This is the Go module cache directory where dependencies are stored

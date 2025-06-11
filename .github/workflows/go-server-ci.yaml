@@ -1,55 +1,67 @@
-name: Go CI  # Human-readable name of your workflow shown in the GitHub Actions UI
+# Name of the workflow
+name: Go Server CI
 
+# Trigger conditions for the workflow
 on:
+  # Allows manual triggering of the workflow
   workflow_dispatch:
+  # Runs the workflow on push events to the main branch
   push:
-    branches: [main]  # Trigger workflow when code is pushed to the 'main' branch
+    branches: [main]
+  # Runs the workflow on pull request events targeting the main branch
   pull_request:
-    branches: [main]  # Also trigger when a PR is opened targeting 'main'
+    branches: [main]
 
 jobs:
-  build-and-test:       # The job name (arbitrary but descriptive)
-    runs-on: ubuntu-latest  # Run this job in a clean Ubuntu virtual machine (GitHub-hosted)
+  build-and-test:
+    # Specifies the runner environment
+    runs-on: ubuntu-latest
 
-    steps:  # A sequence of shell steps executed on the runner
+    defaults:
+      run:
+        # Sets the working directory for all run steps
+        working-directory: .
 
+    steps:
+      # Checks out the repository code
       - name: Checkout code
         uses: actions/checkout@v4
-        # Downloads your repository source code into the runner's working directory
 
+      # Sets up the Go environment
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.23.0'  # Match this with the Go version in your go.mod
+          # Specifies the Go version to use
+          go-version: '1.23.0'
 
-      - name: Cache Go modules
-        uses: actions/cache@v4
-        with:
-          path: /go/pkg/mod
-          # This is the Go module cache directory where dependencies are stored
+      # Installs the protobuf compiler to avoid go.mod tidy errors
+      - name: Install protoc
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y protobuf-compiler
 
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          # This cache key is uniquely generated from:
-          # - runner.os: e.g., ubuntu-latest
-          # - go.sum hash: captures all dependencies' versions
-          # If go.sum changes → cache key changes → fresh deps are downloaded
+      # Generates Go code from the protobuf file
+      - name: Generate protobuf code
+        run: |
+          protoc --go_out=. --go-grpc_out=. proto/payment.proto
 
-          restore-keys: |
-            ${{ runner.os }}-go-
-          # If exact key not found, fall back to any other Go cache for that OS
+      # Adds a replace directive to go.mod
+      - name: Add Go module replace
+        run: |
+          echo 'replace github.com/ajitm722/payment-grpc_github-actions => .' >> go.mod
 
-      - name: Install dependencies
+      # Cleans up and verifies dependencies
+      - name: Tidy modules
         run: go mod tidy
-        # Ensures go.mod and go.sum are in sync and all modules are fetched
 
+      # Builds the server application
       - name: Build server
-        run: go build -v ./server
-        # Compiles the server package
+        run: go build ./server
 
+      # Builds the client application
       - name: Build client
-        run: go build -v ./client
-        # Compiles the client package
+        run: go build ./client
 
-      - name: Run unit tests
+      # Runs tests for the server with verbose output and no caching
+      - name: Run tests
         run: go test -v -count=1 ./server/...
-        # Runs all test files recursively inside the server/ directory
